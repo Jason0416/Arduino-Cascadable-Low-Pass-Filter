@@ -83,7 +83,7 @@ LPF :: LPF ( double bandWidthInHzOrAlpha, bool isInBandwidth, uint8_t cascades )
 void LPF :: Reset ( double initialValue ) {
 	for ( uint8_t i = 0; i < numCascades; i++ )
 		lastValue[i] = initialValue;
-	lastTimeInUsec = micros();
+	elapsed_micros = 0;
 }
 
 /*
@@ -106,11 +106,7 @@ double LPF :: NextValue ( double currentValue ) {
 	float sampleTimeInSec;
 	
 	if ( RCTime != 0.0 ) {
-		sampleTimeInSec = ((float)micros() - (float)lastTimeInUsec) * 1.0e-6;
-		if ( sampleTimeInSec < 0.0 ) {		// counter overrun
-			lastTimeInUsec = micros();
-			return lastValue[numCascades - 1];
-		}
+		sampleTimeInSec = ((float)elapsed_micros) * 1.0e-6;
 		alpha = sampleTimeInSec / (RCTime + sampleTimeInSec);
 	}
 
@@ -119,7 +115,7 @@ double LPF :: NextValue ( double currentValue ) {
 		else            val = lastValue[i-1];
 		lastValue[i] = lastValue[i] + alpha * (val - lastValue[i]);
 	}
-	lastTimeInUsec = micros();
+	elapsed_micros = 0;
 	return lastValue[numCascades - 1];
 }
 
