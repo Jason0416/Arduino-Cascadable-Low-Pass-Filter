@@ -57,7 +57,7 @@ class LPF {
 		
 		uint8_t numCascades;
 		double RCTime, alpha, * lastValue;
-		unsigned long lastTimeInUsec;
+		elapsedMicros elapsed_micros;
 };
 
 #endif
